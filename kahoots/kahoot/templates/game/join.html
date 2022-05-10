@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <title>Присоединиться к игре</title>
+</head>
+<body>
+<div class="mx-5 mt-5 mb-2">
+<form>
+    {% csrf_token %}
+    <div class="form-group m-1">
+        <label for="form_game-id">Номер игры</label>
+        <input type="number" class="form-control" name="form_game-id" id="form_game-id" placeholder="123456" />
+    </div>
+    <div class="form-group m-1">
+        <label for="form_nickname">Никнейм</label>
+        <input type="text" class="form-control" name="form_nickname" id="form_nickname" placeholder="КрасивыйБобр263" />
+    </div>
+    <button type="submit" formaction="{% url 'join' %}" formmethod="post" class="btn btn-info m-1">Присоединиться!</button>
+</form>
+</div>
+</body>
+</html>
