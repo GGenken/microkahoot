@@ -25,8 +25,8 @@ class Game(models.Model):
     quiz = models.ForeignKey('Quiz', on_delete=models.CASCADE)
     start_time = models.DateTimeField('date published', default=utils.timezone.now)
     code = models.IntegerField(default=generate_game_code)
-    status = models.IntegerField(choices=STATUSES, default=0)
-    current_question = models.IntegerField(default=1)
+    status = models.IntegerField(choices=STATUSES, default=0, null=False)
+    current_question = models.ForeignKey('Question', default=None, null=True, on_delete=models.DO_NOTHING)
 
 
 class Quiz(models.Model):
@@ -42,6 +42,9 @@ class Question(models.Model):
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField('date published', default=utils.timezone.now)
 
+    class Meta:
+        order_with_respect_to = 'quiz'
+
     def __str__(self):
         return self.question_text
 
@@ -50,6 +53,10 @@ class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
+    is_right = models.BooleanField(default=False)
+
+    class Meta:
+        order_with_respect_to = 'question'
 
     def __str__(self):
         return self.choice_text

@@ -117,6 +117,8 @@ def initialize(request, quiz_id):
     quiz = Quiz.objects.get(pk=quiz_id)
     new_game = Game.objects.create(quiz=quiz)
     new_game.save()
+
+    request.session['admin'] = True
     return redirect('monitor', game_id=new_game.id)
 
 
@@ -134,6 +136,7 @@ def join(request):
         participant = Participant.objects.create(nickname=form['form_nickname'], game=game)
 
         request.session['participant_id'] = participant.id
+        request.session['admin'] = False
 
         return redirect('monitor', game_id=game.id)
 
@@ -141,11 +144,49 @@ def join(request):
 def monitor(request, game_id):
     game = Game.objects.get(pk=game_id)
 
-    if game.status == 'Started':
-        redirect()
-
     template = loader.get_template('game/monitor_start.html')
     return HttpResponse(template.render({
         'game': game,
         'participant': Participant.objects.get(pk=request.session['participant_id']) if request.session.get('participant_id', -1) != -1 else -1
     }, request))
+
+
+def monitor_question(request , game_id):
+    game = Game.objects.get(pk=game_id)
+
+    template = loader.get_template()
+    return HttpResponse(template.render({'game': game}, request))
+
+
+def resolve(request, game_id):
+    game = Game.objects.get(pk=game_id)
+
+    if request.session.get('admin', False):
+        if game.status == 0:
+            return redirect('switch-question', game_id)
+    else:
+        if game.status == 0:
+            return redirect('monitor', game_id)
+
+
+def switch_question(request, game_id):
+    game = Game.objects.get(pk=game_id)
+
+    if request.session.get('admin', False):
+        if game.status == 0:
+            game.current_question = game.quiz.question_set.first()
+            game.status = 1
+            game.save()
+        elif game.status == 1:
+            try:
+                game.current_question = game.current_question.get_next_in_order()
+            except Question.DoesNotExist:
+                game.status = 2
+            finally:
+                game.save()
+        elif game.status == 2:
+            pass
+
+    redirect('resolve', game_id)
+
+

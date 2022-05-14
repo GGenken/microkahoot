@@ -11,7 +11,13 @@ urlpatterns = [
     path('<int:quiz_id>/start_quiz/', views.initialize, name='start-game'),
     path('join/', views.join_page, name='join-page'),
     path('play/', views.join, name='join'),
+    path('resolve/<int:game_id>/', views.resolve, name='resolve'),
     path('monitor/<int:game_id>/', views.monitor, name='monitor'),
+    path('monitor_question/<int:game_id>/', views.monitor_question, name='monitor-question'),
+    path('switch_question/<int:game_id>/', views.switch_question, name='switch-question'),
+
+    # path('<int:game_id>/play', views.question_answering_page, name='play'),
+    # path('<int:game_id>/answer', views.accept_answer, name='accept-answer'),
 
     path('question/<int:question_id>/', views.question_detail, name='question-detail'),
     path('question/<int:question_id>/add_option/', views.question_add_option, name='question-addoption'),

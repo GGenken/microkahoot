@@ -27,7 +27,7 @@
     {% if participant != -1 %}
         <b>Твой никнейм - {{ participant.nickname }}</b>
     {% else %}
-        <form>
+        <form action="{% url 'resolve' game.id %}">
             <button class="btn bg-info">Начать игру</button>
         </form>
     {% endif %}
